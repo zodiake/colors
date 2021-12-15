@@ -6,6 +6,7 @@ export class EllipseGrid {
   constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {}
   public firstClick: FilledEllipse;
   public secondClick: FilledEllipse;
+  public canBeClicked: boolean;
 
   create() {
     const rows = config.rows;
