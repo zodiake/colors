@@ -5,6 +5,10 @@ export class MainSene extends Phaser.Scene {
   headEllipse: Ellipse;
   purpleEllipse: Ellipse;
 
+  constructor() {
+    super("main");
+  }
+
   preload() {
     const jsonFile = `../images/color.json`;
     this.load.multiatlas("atlas", jsonFile, "images");
