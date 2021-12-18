@@ -3,6 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: './src/ellipse/index.ts',
+  devtool: 'eval-source-map',
   plugins: [
     new CopyPlugin({
       patterns: [

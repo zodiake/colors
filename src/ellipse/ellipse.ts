@@ -1,6 +1,11 @@
 import * as Phaser from "phaser";
 import { config } from "./config";
 
+export enum HalfEnum {
+  top = "top",
+  bottom = "bottom",
+}
+
 export class Ellipse {
   topSprit: Phaser.GameObjects.Sprite;
   bottomSprit: Phaser.GameObjects.Sprite;
@@ -67,11 +72,12 @@ export class Ellipse {
 
   changeColor(bottomColor: string, topColor: string) {}
 
-  playFillBottomHalf(color: string) {
-    this.bottomSprit.anims.play(`${color}-bottom-half`);
-  }
-
-  playFillTopHalf(color: string) {
-    this.topSprit.anims.play(`${color}-top-half`);
+  playHalf(color: string) {
+    const split = color.split("-");
+    if (split[1] == "bottom") {
+      this.bottomSprit.anims.play(`${color}-half`);
+    } else {
+      this.topSprit.anims.play(`${color}-half`);
+    }
   }
 }
