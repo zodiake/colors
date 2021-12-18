@@ -4,14 +4,15 @@ import { Ellipse } from "./ellipse";
 export class EllipseGrid {
   public firstClick = false;
   public secondClick = false;
+  public firstColor: string;
+  public secondColor: string;
   public children: Phaser.GameObjects.GameObject[];
+  timeEvent: Phaser.Time.TimerEvent;
   offsetX = 128 / 3;
   offsetY = 128;
   targetAngle = 70;
 
-  constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {}
-
-  create() {
+  constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {
     const cellHeight = this.scene.scale.height / 6;
     this.children = this.filledEllipse();
 
@@ -21,13 +22,14 @@ export class EllipseGrid {
       cellWidth: this.scene.scale.width / 8,
       cellHeight: this.scene.scale.height / 6,
       position: Phaser.Display.Align.CENTER,
-      x: this.scene.scale.width / 8,
+      x: this.scene.scale.width / 6,
       y: cellHeight * 3,
     });
   }
 
   filledEllipse(): Phaser.GameObjects.GameObject[] {
-    const colors = ["red", "purple"];
+    let colors = ["red", "purple", "red", "purple", "red", "purple"];
+    colors = [...colors, ...colors];
     return colors.map((color) => {
       const sprite = this.scene.add.sprite(
         0,
@@ -35,35 +37,74 @@ export class EllipseGrid {
         config.atlasKey,
         `${color}-filled.png`
       );
-      sprite.on("pointerdown", () => this.pointerDown(color, sprite));
+      sprite.on("pointerdown", () =>
+        this.pointerDown(color, sprite, this.timeEvent)
+      );
       return sprite;
     });
   }
 
-  pointerDown(color: string, sprite: Phaser.GameObjects.Sprite) {
-    console.log(color);
+  setTimeEvent(timeEvent: Phaser.Time.TimerEvent) {
+    this.timeEvent = timeEvent;
+  }
+
+  pointerDown(
+    color: string,
+    sprite: Phaser.GameObjects.Sprite,
+    timeEvent: Phaser.Time.TimerEvent
+  ) {
     // ellipse can be clicked
     if (this.firstClick == false && this.secondClick == false) {
       // prevent click when ellipse is tweening
       this.firstClick = true;
       this.secondClick = true;
       // after tween finish enable second click
-      this.playTween(
-        sprite,
-        `${color}-bottom`,
-        () => (this.secondClick = false)
-      );
+      this.playTween(sprite, `${color}-bottom`, () => {
+        this.secondClick = false;
+        this.firstColor = color;
+      });
     }
     if (this.firstClick == true && this.secondClick == false) {
       this.secondClick = true;
-      this.playTween(sprite, `${color}-top`);
+      this.playTween(sprite, `${color}-top`, () => {
+        this.secondColor = color;
+        const resultColor = this.checkColor(this.firstColor, this.secondColor);
+        if (resultColor) {
+          this.targetEllipse.playBoth(resultColor);
+          timeEvent.remove();
+        } else {
+          this.targetEllipse.restore();
+          this.firstClick = false;
+          this.secondClick = false;
+          this.firstColor = null;
+          this.secondColor = null;
+        }
+      });
+    }
+  }
+
+  checkColor(first: string, second: string): string | null {
+    const mix = [["red", "purple", "blue"]];
+    const filter = mix
+      .filter(([f, s, r]) => {
+        if (f === first && s === second) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .map(([f, s, r]) => r);
+    if (filter.length > 0) {
+      return filter[0];
+    } else {
+      return null;
     }
   }
 
   playTween(
     ellipse: Phaser.GameObjects.Sprite,
     color: string,
-    onComplete: () => void = () => null
+    onComplete: () => void
   ) {
     const [originX, originY] = [ellipse.x, ellipse.y];
     const [targetX, targetY] = [

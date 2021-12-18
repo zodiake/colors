@@ -6,11 +6,10 @@ export class MainSene extends Phaser.Scene {
   purpleEllipse: Ellipse;
   countDownText: Phaser.GameObjects.Text;
   grid: EllipseGrid;
+  timeEvent: Phaser.Time.TimerEvent;
 
   constructor() {
     super("ellipse-main");
-    this.headEllipse = new Ellipse(this);
-    this.grid = new EllipseGrid(this, this.headEllipse);
   }
 
   preload() {
@@ -19,6 +18,8 @@ export class MainSene extends Phaser.Scene {
     this.load.image("three", "../images/SYMB_3.png");
     this.load.image("two", "../images/SYMB_2.png");
     this.load.image("one", "../images/SYMB_1.png");
+    this.load.image("blue-bottom-half", "../images/blue-bottom-half.png");
+    this.load.image("blue-top-half", "../images/blue-top-half.png");
   }
 
   create() {
@@ -27,10 +28,12 @@ export class MainSene extends Phaser.Scene {
     const countDownThree = this.add.image(0, 0, "three");
     const countDownTwo = this.add.image(-100, -100, "two");
     const countDownOne = this.add.image(-100, -100, "one");
-    const countDownText = this.add.text(100, 200, "60");
+
+    this.countDownText = this.add.text(100, 200, "60");
+    this.headEllipse = new Ellipse(this);
+    this.grid = new EllipseGrid(this, this.headEllipse);
 
     this.headEllipse.create();
-    this.grid.create();
 
     Phaser.Display.Align.In.Center(
       countDownThree,
@@ -75,9 +78,10 @@ export class MainSene extends Phaser.Scene {
           ease: "Power1",
           onComplete: () => {
             countDownOne.destroy();
-            this.time.addEvent({
+            this.timeEvent = this.time.addEvent({
               repeat: 59,
-              callback: this.countDownTime(countDownText),
+              callback: this.onStart,
+              callbackScope: this,
               delay: 1000,
             });
           },
@@ -86,11 +90,10 @@ export class MainSene extends Phaser.Scene {
     });
   }
 
-  countDownTime(text: Phaser.GameObjects.Text) {
-    return () => {
-      const current = Number.parseInt(text.text);
-      this.grid.children.forEach((i) => i.setInteractive());
-      text.setText((current - 1).toString());
-    };
+  onStart() {
+    this.grid.children.forEach((i) => i.setInteractive());
+    this.grid.setTimeEvent(this.timeEvent);
+    const current = Number.parseInt(this.countDownText.text);
+    this.countDownText.setText((current - 1).toString());
   }
 }

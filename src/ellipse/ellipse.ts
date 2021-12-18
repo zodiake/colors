@@ -67,10 +67,20 @@ export class Ellipse {
         frameRate: 10,
         repeat: 0,
       });
+
+      this.scene.anims.create({
+        key: `blue-bottom-half`,
+        frames: [{ key: "blue-bottom-half" }],
+        repeat: 0,
+      });
+
+      this.scene.anims.create({
+        key: `blue-top-half`,
+        frames: [{ key: "blue-top-half" }],
+        repeat: 0,
+      });
     }
   }
-
-  changeColor(bottomColor: string, topColor: string) {}
 
   playHalf(color: string) {
     const split = color.split("-");
@@ -79,5 +89,20 @@ export class Ellipse {
     } else {
       this.topSprit.anims.play(`${color}-half`);
     }
+  }
+
+  playBoth(color: string) {
+    this.bottomSprit.anims.play(`${color}-bottom-half`);
+    this.topSprit.anims.play(`${color}-top-half`);
+  }
+
+  playMix(color: string) {
+    this.bottomSprit.anims.play(`${color}-half`);
+    this.topSprit.anims.play(`${color}-half`);
+  }
+
+  restore() {
+    this.bottomSprit.anims.play(`empty-bottom-half`);
+    this.topSprit.anims.play(`empty-top-half`);
   }
 }
