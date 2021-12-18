@@ -5,9 +5,12 @@ export class MainSene extends Phaser.Scene {
   headEllipse: Ellipse;
   purpleEllipse: Ellipse;
   countDownText: Phaser.GameObjects.Text;
+  grid: EllipseGrid;
 
   constructor() {
     super("ellipse-main");
+    this.headEllipse = new Ellipse(this);
+    this.grid = new EllipseGrid(this, this.headEllipse);
   }
 
   preload() {
@@ -25,6 +28,9 @@ export class MainSene extends Phaser.Scene {
     const countDownTwo = this.add.image(-100, -100, "two");
     const countDownOne = this.add.image(-100, -100, "one");
     const countDownText = this.add.text(100, 200, "60");
+
+    this.headEllipse.create();
+    this.grid.create();
 
     Phaser.Display.Align.In.Center(
       countDownThree,
@@ -78,20 +84,13 @@ export class MainSene extends Phaser.Scene {
         },
       ],
     });
-    this.gameLayer();
   }
 
   countDownTime(text: Phaser.GameObjects.Text) {
     return () => {
       const current = Number.parseInt(text.text);
+      this.grid.children.forEach((i) => i.setInteractive());
       text.setText((current - 1).toString());
     };
-  }
-
-  gameLayer() {
-    this.headEllipse = new Ellipse(this);
-    const grid = new EllipseGrid(this, this.headEllipse);
-    this.headEllipse.create();
-    grid.create();
   }
 }

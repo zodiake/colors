@@ -2,17 +2,20 @@ import { config } from "./config";
 import { Ellipse } from "./ellipse";
 
 export class EllipseGrid {
-  constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {}
   public firstClick = false;
   public secondClick = false;
+  public children: Phaser.GameObjects.GameObject[];
   offsetX = 128 / 3;
   offsetY = 128;
   targetAngle = 70;
 
+  constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {}
+
   create() {
     const cellHeight = this.scene.scale.height / 6;
+    this.children = this.filledEllipse();
 
-    Phaser.Actions.GridAlign(this.filledEllipse(), {
+    Phaser.Actions.GridAlign(this.children, {
       width: 6,
       height: 2,
       cellWidth: this.scene.scale.width / 8,
@@ -32,7 +35,6 @@ export class EllipseGrid {
         config.atlasKey,
         `${color}-filled.png`
       );
-      sprite.setInteractive();
       sprite.on("pointerdown", () => this.pointerDown(color, sprite));
       return sprite;
     });
