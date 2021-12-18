@@ -1,7 +1,8 @@
 export class StartScreen extends Phaser.Scene {
   private title = "ellipse-title";
   private button = "ellipse-button";
-  private description = "123";
+  private description =
+    "根据左上角提示颜料桶颜色，用手自拖动下方两种颜色颜料桶，导入上方崆峒，知道玉提示颜色相同";
 
   constructor() {
     super("startScreen");
@@ -32,8 +33,8 @@ export class StartScreen extends Phaser.Scene {
     );
 
     buttonImage.setInteractive();
-    buttonImage.on("pointDown", () => {
-      this.scene.start("main");
+    buttonImage.on("pointerdown", () => {
+      this.scene.start("ellipse-main");
     });
   }
 }

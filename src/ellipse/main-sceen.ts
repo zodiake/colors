@@ -6,7 +6,7 @@ export class MainSene extends Phaser.Scene {
   purpleEllipse: Ellipse;
 
   constructor() {
-    super("main");
+    super("ellipse-main");
   }
 
   preload() {
