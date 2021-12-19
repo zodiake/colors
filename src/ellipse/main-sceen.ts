@@ -49,7 +49,9 @@ export class MainSene extends Phaser.Scene {
     const countDownTwo = this.add.image(-100, -100, "two");
     const countDownOne = this.add.image(-100, -100, "one");
 
-    const targetEllipse = new TargetEllipse(this);
+    const targetEllipse = new TargetEllipse(this, {
+      rules: [["red", "purple", "blue"]],
+    });
 
     /*
     this.countDownText = this.add.text(100, 200, "60");

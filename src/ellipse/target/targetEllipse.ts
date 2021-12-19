@@ -1,22 +1,30 @@
 import { HalfEllipse } from "./halfEllipse";
 
+export interface TargetEllipseConfig {
+  rules: string[][];
+}
+
 export class TargetEllipse extends Phaser.GameObjects.Container {
-  mixRule = [["red", "purple", "blue"]];
+  rules: string[][];
   top: HalfEllipse;
   bottom: HalfEllipse;
   firstColor: string;
   secondColor: string;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, config: TargetEllipseConfig) {
     super(scene);
+    this.rules = [
+      ...config.rules.map(([f, s, m]) => [s, f, m]),
+      ...config.rules,
+    ];
     const top = new HalfEllipse(scene, {
       orient: "bottom",
-      colors: ["red"],
+      colors: this.rules.map((i) => i[0]),
       key: "atlas",
     });
     const bottom = new HalfEllipse(scene, {
       orient: "top",
-      colors: ["purple"],
+      colors: this.rules.map((i) => i[1]),
       key: "atlas",
     });
     const width = scene.scale.width;
@@ -49,7 +57,7 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
 
   checkColor(): string | null {
     const result = [];
-    for (const [f, s, m] of this.mixRule) {
+    for (const [f, s, m] of this.rules) {
       if (f === this.firstColor && s === this.secondColor) {
         result.push(m);
       }
