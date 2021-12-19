@@ -8,21 +8,24 @@ export class EllipseGrid {
   public secondColor: string;
   public children: Phaser.GameObjects.GameObject[];
   timeEvent: Phaser.Time.TimerEvent;
+  columns = 6;
+  rows = 2;
   offsetX = 128 / 3;
   offsetY = 128;
   targetAngle = 70;
 
   constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {
     const cellHeight = this.scene.scale.height / 6;
+    const cellWidth = this.scene.scale.width / (this.columns + 2);
     this.children = this.filledEllipse();
 
     Phaser.Actions.GridAlign(this.children, {
-      width: 6,
-      height: 2,
-      cellWidth: this.scene.scale.width / 8,
-      cellHeight: this.scene.scale.height / 6,
+      width: this.columns,
+      height: this.rows,
+      cellWidth: cellWidth,
+      cellHeight,
       position: Phaser.Display.Align.CENTER,
-      x: this.scene.scale.width / 6,
+      x: cellWidth + cellWidth / 2,
       y: cellHeight * 3,
     });
   }

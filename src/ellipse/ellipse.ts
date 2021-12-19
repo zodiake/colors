@@ -9,19 +9,26 @@ export enum HalfEnum {
 export class Ellipse {
   topSprit: Phaser.GameObjects.Sprite;
   bottomSprit: Phaser.GameObjects.Sprite;
+  container: Phaser.GameObjects.Container;
 
-  constructor(private scene: Phaser.Scene) {}
+  constructor(private scene: Phaser.Scene) {
+    this.container = scene.add.container(0, 0);
+    const width = scene.scale.width;
+    const height = scene.scale.height;
 
-  create() {
-    const x = this.scene.scale.width / 2;
-    const y = this.scene.scale.height / 4;
-    const scene = this.scene;
-    this.topSprit = scene.add.sprite(x, y, config.atlasKey, `empty-top.png`);
+    this.topSprit = scene.add.sprite(0, 0, config.atlasKey, `empty-top.png`);
     this.bottomSprit = scene.add.sprite(
-      x,
-      y,
+      0,
+      0,
       config.atlasKey,
       `empty-bottom.png`
+    );
+    this.container.add(this.topSprit);
+    this.container.add(this.bottomSprit);
+
+    Phaser.Display.Align.In.Center(
+      this.container,
+      scene.add.zone(width / 2, height / 4, width, height)
     );
     this.addAnimation();
   }

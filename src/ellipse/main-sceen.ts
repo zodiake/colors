@@ -33,8 +33,6 @@ export class MainSene extends Phaser.Scene {
     this.headEllipse = new Ellipse(this);
     this.grid = new EllipseGrid(this, this.headEllipse);
 
-    this.headEllipse.create();
-
     Phaser.Display.Align.In.Center(
       countDownThree,
       this.add.zone(width / 2, height / 2, width, height)
