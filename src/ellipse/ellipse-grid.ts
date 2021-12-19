@@ -10,11 +10,16 @@ export class EllipseGrid {
   timeEvent: Phaser.Time.TimerEvent;
   columns = 6;
   rows = 2;
-  offsetX = 128 / 3;
-  offsetY = 128;
+  pictureWidth = 128;
+  offsetX = this.pictureWidth / 3;
+  offsetY = this.pictureWidth;
   targetAngle = 70;
 
-  constructor(private scene: Phaser.Scene, public targetEllipse: Ellipse) {
+  constructor(
+    private scene: Phaser.Scene,
+    public targetEllipse: Ellipse,
+    public targetColor: string
+  ) {
     const cellHeight = this.scene.scale.height / 6;
     const cellWidth = this.scene.scale.width / (this.columns + 2);
     this.children = this.filledEllipse();
@@ -72,9 +77,16 @@ export class EllipseGrid {
       this.playTween(sprite, `${color}-top`, () => {
         this.secondColor = color;
         const resultColor = this.checkColor(this.firstColor, this.secondColor);
-        if (resultColor) {
+        if (resultColor && resultColor == this.targetColor) {
           this.targetEllipse.playBoth(resultColor);
           timeEvent.remove();
+        } else if (resultColor) {
+          this.targetEllipse.playBoth(resultColor);
+          this.targetEllipse.restore();
+          this.firstClick = false;
+          this.secondClick = false;
+          this.firstColor = null;
+          this.secondColor = null;
         } else {
           this.targetEllipse.restore();
           this.firstClick = false;

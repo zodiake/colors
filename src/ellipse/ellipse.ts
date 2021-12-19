@@ -33,8 +33,8 @@ export class Ellipse {
     this.addAnimation();
   }
 
-  getSource(): Phaser.GameObjects.Sprite {
-    return this.topSprit;
+  getSource(): Phaser.GameObjects.Container {
+    return this.container;
   }
 
   private addAnimation() {

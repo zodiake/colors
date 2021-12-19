@@ -11,7 +11,7 @@ const conf = {
     width: "100%",
     height: "100%",
   },
-  scene: [StartScreen, MainSene],
+  scene: [MainSene],
 };
 
 const game = new Phaser.Game(conf);

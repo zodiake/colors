@@ -1,3 +1,5 @@
+import { FailUI } from "../common/fail-ui";
+import { ImageEnum } from "./config";
 import { Ellipse } from "./ellipse";
 import { EllipseGrid } from "./ellipse-grid";
 
@@ -7,6 +9,9 @@ export class MainSene extends Phaser.Scene {
   countDownText: Phaser.GameObjects.Text;
   grid: EllipseGrid;
   timeEvent: Phaser.Time.TimerEvent;
+  failUI: FailUI<MainSene>;
+  targetColors = ["blue"];
+  targetColor: string;
 
   constructor() {
     super("ellipse-main");
@@ -20,6 +25,20 @@ export class MainSene extends Phaser.Scene {
     this.load.image("one", "../images/SYMB_1.png");
     this.load.image("blue-bottom-half", "../images/blue-bottom-half.png");
     this.load.image("blue-top-half", "../images/blue-top-half.png");
+
+    this.load.image(ImageEnum.HOME_BUTTON, "../images/SYMB_PLAY.png");
+    this.load.image(ImageEnum.RESTART_BUTTON, "../images/SYMB_REPLAY.png");
+    this.load.image(ImageEnum.FAIL_IMAGE, "../images/ellipse-title2.png");
+    this.load.image("ellipse-title", "../images/ellipse-title.png");
+  }
+
+  initTarget() {
+    const targetColorIndex = Math.floor(
+      Math.random() * this.targetColors.length
+    );
+    this.targetColor = this.targetColors[targetColorIndex];
+
+    this.add.image(0, 0, `${this.targetColors[targetColorIndex]}-full`);
   }
 
   create() {
@@ -31,7 +50,9 @@ export class MainSene extends Phaser.Scene {
 
     this.countDownText = this.add.text(100, 200, "60");
     this.headEllipse = new Ellipse(this);
-    this.grid = new EllipseGrid(this, this.headEllipse);
+    this.grid = new EllipseGrid(this, this.headEllipse, this.targetColor);
+    this.failUI = new FailUI(this, ImageEnum.FAIL_IMAGE);
+    this.failUI.init();
 
     Phaser.Display.Align.In.Center(
       countDownThree,
@@ -62,6 +83,8 @@ export class MainSene extends Phaser.Scene {
           ease: "Power1",
           onComplete: () => {
             countDownTwo.destroy();
+            this.grid.children.forEach((i) => i.setInteractive());
+            this.grid.setTimeEvent(this.timeEvent);
             Phaser.Display.Align.In.Center(
               countDownOne,
               this.add.zone(width / 2, height / 2, width, height)
@@ -77,7 +100,7 @@ export class MainSene extends Phaser.Scene {
           onComplete: () => {
             countDownOne.destroy();
             this.timeEvent = this.time.addEvent({
-              repeat: 59,
+              repeat: 5,
               callback: this.onStart,
               callbackScope: this,
               delay: 1000,
@@ -88,10 +111,14 @@ export class MainSene extends Phaser.Scene {
     });
   }
 
+  // update count down text
   onStart() {
-    this.grid.children.forEach((i) => i.setInteractive());
-    this.grid.setTimeEvent(this.timeEvent);
     const current = Number.parseInt(this.countDownText.text);
     this.countDownText.setText((current - 1).toString());
+    if (current === 0) {
+      this.timeout();
+    }
   }
+
+  timeout() {}
 }
