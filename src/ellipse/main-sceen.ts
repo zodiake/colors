@@ -1,7 +1,8 @@
 import { FailUI } from "../common/fail-ui";
-import { ImageEnum } from "./config";
+import { ImageKeys } from "./config";
 import { Ellipse } from "./ellipse";
 import { EllipseGrid } from "./ellipse-grid";
+import { TargetEllipse } from "./target/targetEllipse";
 
 export class MainSene extends Phaser.Scene {
   headEllipse: Ellipse;
@@ -26,9 +27,9 @@ export class MainSene extends Phaser.Scene {
     this.load.image("blue-bottom-half", "../images/blue-bottom-half.png");
     this.load.image("blue-top-half", "../images/blue-top-half.png");
 
-    this.load.image(ImageEnum.HOME_BUTTON, "../images/SYMB_PLAY.png");
-    this.load.image(ImageEnum.RESTART_BUTTON, "../images/SYMB_REPLAY.png");
-    this.load.image(ImageEnum.FAIL_IMAGE, "../images/ellipse-title2.png");
+    this.load.image(ImageKeys.HOME_BUTTON, "../images/SYMB_PLAY.png");
+    this.load.image(ImageKeys.RESTART_BUTTON, "../images/SYMB_REPLAY.png");
+    this.load.image(ImageKeys.FAIL_IMAGE, "../images/ellipse-title2.png");
     this.load.image("ellipse-title", "../images/ellipse-title.png");
   }
 
@@ -48,6 +49,9 @@ export class MainSene extends Phaser.Scene {
     const countDownTwo = this.add.image(-100, -100, "two");
     const countDownOne = this.add.image(-100, -100, "one");
 
+    const targetEllipse = new TargetEllipse(this);
+
+    /*
     this.countDownText = this.add.text(100, 200, "60");
     this.headEllipse = new Ellipse(this);
     this.grid = new EllipseGrid(this, this.headEllipse, this.targetColor);
@@ -109,16 +113,12 @@ export class MainSene extends Phaser.Scene {
         },
       ],
     });
+    */
   }
 
   // update count down text
   onStart() {
     const current = Number.parseInt(this.countDownText.text);
     this.countDownText.setText((current - 1).toString());
-    if (current === 0) {
-      this.timeout();
-    }
   }
-
-  timeout() {}
 }
