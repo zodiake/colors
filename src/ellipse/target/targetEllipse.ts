@@ -48,11 +48,11 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   secondFill(color: string) {
     this.top.playHalf(color);
     this.secondColor = color;
-    const mixColor = this.checkColor();
-    if (mixColor != null) {
-      this.bottom.playFill(mixColor);
-      this.bottom.playFill(mixColor);
-    }
+  }
+
+  restore() {
+    this.bottom.restore();
+    this.top.restore();
   }
 
   checkColor(): string | null {

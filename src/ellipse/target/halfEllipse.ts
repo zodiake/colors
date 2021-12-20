@@ -23,7 +23,7 @@ export class HalfEllipse extends Phaser.GameObjects.Sprite {
   addFrame(colors: string[], key: string, orient: string) {
     for (let i = 0; i < colors.length; i++) {
       const color = colors[i];
-      const prefix = `${colors}-${orient}-`;
+      const prefix = `${color}-${orient}-`;
       const frameNames = this.scene.anims.generateFrameNames(key, {
         start: 1,
         end: 6,

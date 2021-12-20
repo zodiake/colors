@@ -1,22 +1,53 @@
 import { TargetEllipse } from "../target/targetEllipse";
+import { EllipseGroup } from "./ellipseGroup";
 
 export interface EllipseConfig {
   color: string;
   angle: number;
-  target: TargetEllipse;
-  countDownTime: Phaser.Time.TimerEvent;
 }
 
 export class EllipseSingle extends Phaser.GameObjects.Sprite {
-  constructor(public scene: Phaser.Scene, public config: EllipseConfig) {
+  constructor(
+    public scene: Phaser.Scene,
+    public group: EllipseGroup,
+    public target: TargetEllipse,
+    public countDownTime: Phaser.Time.TimerEvent,
+    public config: EllipseConfig
+  ) {
     super(scene, 0, 0, "atals", `${config.color}-filled.png`);
 
-    this.on("pointerdown", () => this.playMove());
+    this.on("pointerdown", () => {
+      this.pointerdown();
+    });
   }
 
-  playMove() {
+  pointerdown() {
+    if (this.group.firstColor == null && this.group.secondColor == null) {
+      this.playMove(() => {
+        this.group.firstColor = this;
+      });
+      this.target.firstFill(this.config.color);
+    }
+    if (this.group.firstColor != null && this.group.secondColor == null) {
+      this.playMove(() => {
+        this.group.secondColor = this;
+      });
+      this.target.secondFill(this.config.color);
+
+      const mixColor = this.target.checkColor();
+      if (mixColor == null) {
+        this.target.restore();
+        this.group.firstColor = null;
+        this.group.secondColor = null;
+      } else {
+        this.countDownTime.remove(true);
+      }
+    }
+  }
+
+  playMove(onComplete: () => void) {
     const [originX, originY] = [this.x, this.y];
-    const [targetX, targetY] = [this.config.target.x, this.config.target.y];
+    const [targetX, targetY] = [this.target.x, this.target.y];
     const timeline = this.scene.tweens.createTimeline();
 
     let tx = 0;
@@ -45,6 +76,7 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       x: originX,
       y: originY,
       angle: 0,
+      onComplete,
     });
 
     timeline.play();

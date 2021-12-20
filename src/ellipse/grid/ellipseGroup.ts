@@ -5,22 +5,20 @@ export interface EllipseGroupConfig {
   colors: string[];
   columns: number;
   rows: number;
-  target: TargetEllipse;
-  countDownTime: Phaser.Time.TimerEvent;
 }
 
-export class EllipseGroup extends Phaser.GameObjects.Group {
-  constructor(public scene: Phaser.Scene, config: EllipseGroupConfig) {
-    super(scene);
-    const children = config.colors.map(
-      (color) =>
-        new EllipseSingle(scene, {
-          color,
-          target: config.target,
-          angle: 70,
-          countDownTime: config.countDownTime,
-        })
-    );
+export class EllipseGroup {
+  firstColor: EllipseSingle;
+  secondColor: EllipseSingle;
+  constructor(
+    public scene: Phaser.Scene,
+    public target: TargetEllipse,
+    public timeEvent: Phaser.Time.TimerEvent,
+    config: EllipseGroupConfig
+  ) {
+    const children = config.colors.map((color) => {
+      return scene.add.sprite(0, 0, "atlas", `${color}-filled.png`);
+    });
     const cellHeight = this.scene.scale.height / 6;
     const cellWidth = this.scene.scale.width / (config.columns + 2);
 

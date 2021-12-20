@@ -2,6 +2,7 @@ import { FailUI } from "../common/fail-ui";
 import { ImageKeys } from "./config";
 import { Ellipse } from "./ellipse";
 import { EllipseGrid } from "./ellipse-grid";
+import { EllipseGroup } from "./grid/ellipseGroup";
 import { TargetEllipse } from "./target/targetEllipse";
 
 export class MainSene extends Phaser.Scene {
@@ -33,15 +34,6 @@ export class MainSene extends Phaser.Scene {
     this.load.image("ellipse-title", "../images/ellipse-title.png");
   }
 
-  initTarget() {
-    const targetColorIndex = Math.floor(
-      Math.random() * this.targetColors.length
-    );
-    this.targetColor = this.targetColors[targetColorIndex];
-
-    this.add.image(0, 0, `${this.targetColors[targetColorIndex]}-full`);
-  }
-
   create() {
     const width = this.scale.width;
     const height = this.scale.height;
@@ -51,6 +43,18 @@ export class MainSene extends Phaser.Scene {
 
     const targetEllipse = new TargetEllipse(this, {
       rules: [["red", "purple", "blue"]],
+    });
+    this.timeEvent = this.time.addEvent({
+      repeat: 5,
+      callback: this.onStart,
+      callbackScope: this,
+      delay: 1000,
+      paused: true,
+    });
+    const groupEllipse = new EllipseGroup(this, targetEllipse, this.timeEvent, {
+      colors: ["red", "purple"],
+      columns: 6,
+      rows: 2,
     });
 
     /*
