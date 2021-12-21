@@ -12,12 +12,13 @@ export class HalfEllipse extends Phaser.GameObjects.Sprite {
   constructor(scene: Phaser.Scene, config: HalfEllipseConfig) {
     const colors = config.colors;
     if (config.orient == "bottom") {
-      super(scene, 0, 0, "atlas", ImageKeys.BOTTOM_HALD_EMPTY_ELLIPSE);
+      super(scene, 0, 0, "atlas", ImageKeys.BOTTOM_HALF_EMPTY_ELLIPSE);
     } else {
       super(scene, 0, 0, "atlas", ImageKeys.TOP_HALF_EMPTY_ELLIPSE);
     }
     this.position = config.orient;
     this.addFrame(colors, config.key, config.orient);
+    scene.add.existing(this);
   }
 
   addFrame(colors: string[], key: string, orient: string) {
@@ -30,22 +31,18 @@ export class HalfEllipse extends Phaser.GameObjects.Sprite {
         prefix,
         suffix: ".png",
       });
+      console.log(frameNames);
       this.scene.anims.create({
-        key: prefix,
+        key: `${color}-${orient}`,
         frames: frameNames,
         frameRate: 10,
-        repeat: 0,
-      });
-      this.scene.anims.create({
-        key: `${color}-${orient}-half`,
-        frames: [{ key: `${color}-${orient}-half` }],
-        repeat: 0,
+        repeat: -1,
       });
     }
   }
 
-  playHalf(color: string) {
-    this.play(`${color}-half`);
+  playHalf(color: string, orient: string) {
+    this.play(`${color}-${orient}-half`);
   }
 
   playFill(color: string) {

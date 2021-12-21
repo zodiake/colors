@@ -15,5 +15,5 @@ export const ImageKeys = {
   SUCCESS_IMAGE: "ellipse-title",
   FAIL_IMAGE: "ellipse-title",
   TOP_HALF_EMPTY_ELLIPSE: "empty-top.png",
-  BOTTOM_HALD_EMPTY_ELLIPSE: "empty-bottom.png",
+  BOTTOM_HALF_EMPTY_ELLIPSE: "empty-bottom.png",
 };

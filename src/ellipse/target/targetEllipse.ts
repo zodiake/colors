@@ -18,12 +18,12 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
       ...config.rules,
     ];
     this.top = new HalfEllipse(scene, {
-      orient: "bottom",
+      orient: "top",
       colors: this.rules.map((i) => i[0]),
       key: "atlas",
     });
     this.bottom = new HalfEllipse(scene, {
-      orient: "top",
+      orient: "bottom",
       colors: this.rules.map((i) => i[1]),
       key: "atlas",
     });
@@ -41,12 +41,12 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   }
 
   firstFill(color: string) {
-    this.bottom.playHalf(color);
+    this.bottom.play(`${color}-bottom`);
     this.firstColor = color;
   }
 
   secondFill(color: string) {
-    this.top.playHalf(color);
+    this.top.play(`${color}-top`);
     this.secondColor = color;
   }
 
