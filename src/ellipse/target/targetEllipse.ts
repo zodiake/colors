@@ -17,12 +17,12 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
       ...config.rules.map(([f, s, m]) => [s, f, m]),
       ...config.rules,
     ];
-    const top = new HalfEllipse(scene, {
+    this.top = new HalfEllipse(scene, {
       orient: "bottom",
       colors: this.rules.map((i) => i[0]),
       key: "atlas",
     });
-    const bottom = new HalfEllipse(scene, {
+    this.bottom = new HalfEllipse(scene, {
       orient: "top",
       colors: this.rules.map((i) => i[1]),
       key: "atlas",
@@ -30,8 +30,8 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
     const width = scene.scale.width;
     const height = scene.scale.height;
 
-    this.add(top);
-    this.add(bottom);
+    this.add(this.top);
+    this.add(this.bottom);
 
     Phaser.Display.Align.In.Center(
       this,

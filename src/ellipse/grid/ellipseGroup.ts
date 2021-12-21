@@ -7,7 +7,7 @@ export interface EllipseGroupConfig {
   rows: number;
 }
 
-export class EllipseGroup {
+export class EllipseGroup extends Phaser.GameObjects.Group {
   firstColor: EllipseSingle;
   secondColor: EllipseSingle;
   constructor(
@@ -16,13 +16,20 @@ export class EllipseGroup {
     public timeEvent: Phaser.Time.TimerEvent,
     config: EllipseGroupConfig
   ) {
-    const children = config.colors.map((color) => {
-      return scene.add.sprite(0, 0, "atlas", `${color}-filled.png`);
-    });
+    super(scene);
+    config.colors
+      .map((color) => {
+        return new EllipseSingle(this.scene, this, target, timeEvent, {
+          color,
+          angle: 70,
+        });
+      })
+      .forEach((i) => this.add(i, true));
+
     const cellHeight = this.scene.scale.height / 6;
     const cellWidth = this.scene.scale.width / (config.columns + 2);
 
-    Phaser.Actions.GridAlign(children, {
+    Phaser.Actions.GridAlign(this.children.getArray(), {
       width: config.columns,
       height: config.rows,
       cellWidth: cellWidth,

@@ -14,8 +14,9 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
     public countDownTime: Phaser.Time.TimerEvent,
     public config: EllipseConfig
   ) {
-    super(scene, 0, 0, "atals", `${config.color}-filled.png`);
+    super(scene, 0, 0, "atlas", `${config.color}-filled.png`);
 
+    this.setInteractive();
     this.on("pointerdown", () => {
       this.pointerdown();
     });

@@ -52,7 +52,7 @@ export class MainSene extends Phaser.Scene {
       paused: true,
     });
     const groupEllipse = new EllipseGroup(this, targetEllipse, this.timeEvent, {
-      colors: ["red", "purple"],
+      colors: ["red", "purple", "red", "purple"],
       columns: 6,
       rows: 2,
     });
