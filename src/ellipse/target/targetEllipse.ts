@@ -13,6 +13,8 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, config: TargetEllipseConfig) {
     super(scene);
+    const width = scene.scale.width;
+    const height = scene.scale.height;
     this.rules = [
       ...config.rules.map(([f, s, m]) => [s, f, m]),
       ...config.rules,
@@ -27,8 +29,6 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
       colors: this.rules.map((i) => i[1]),
       key: "atlas",
     });
-    const width = scene.scale.width;
-    const height = scene.scale.height;
 
     this.add(this.top);
     this.add(this.bottom);
@@ -40,14 +40,13 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  firstFill(color: string) {
-    this.bottom.play(`${color}-bottom`);
-    this.firstColor = color;
-  }
-
-  secondFill(color: string) {
-    this.top.play(`${color}-top`);
-    this.secondColor = color;
+  playFill(color: string) {
+    if (this.firstColor == null) {
+      this.bottom.play(`${color}-bottom`);
+    }
+    if (this.firstColor != null && this.secondColor == null) {
+      this.top.play(`${color}-top`);
+    }
   }
 
   restore() {
