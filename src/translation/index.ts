@@ -14,6 +14,9 @@ const conf = {
     matter: {
       debug: true,
       debugBodyColor: 0xffffff,
+      gravity: {
+        y: 0.1,
+      },
     },
   },
   scene: [Main],

@@ -31,21 +31,22 @@ export class HalfEllipse extends Phaser.GameObjects.Sprite {
         prefix,
         suffix: ".png",
       });
-      console.log(frameNames);
       this.scene.anims.create({
         key: `${color}-${orient}`,
         frames: frameNames,
         frameRate: 10,
-        repeat: -1,
+        repeat: 0,
       });
     }
   }
 
   playHalf(color: string, orient: string) {
+    console.log(123);
     this.play(`${color}-${orient}-half`);
   }
 
   playFill(color: string) {
+    console.log(123);
     this.play(`${color}-filled`);
   }
 

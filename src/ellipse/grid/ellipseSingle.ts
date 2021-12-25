@@ -25,11 +25,9 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
   pointerdown() {
     if (this.group.firstColor == null && this.group.secondColor == null) {
       this.playMove();
-      this.target.playFill(this.config.color);
     }
     if (this.group.firstColor != null && this.group.secondColor == null) {
       this.playMove();
-      this.target.playFill(this.config.color);
 
       const mixColor = this.target.checkColor();
       if (mixColor == null) {
@@ -66,10 +64,31 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       },
       angle: { value: tag, duration: 1500 * 1.2, ease: "Power2" },
       ease: "Power2",
-      yoyo: true,
-      onYoyo: () => {
+      onComplete: () => {
         this.target.playFill(this.config.color);
       },
+    });
+    timeline.add({
+      targets: this,
+      x: { value: tx, duration: 1000, ease: "Power2" },
+      y: {
+        value: targetY - this.height / 3,
+        duration: 1000,
+        ease: "Power2",
+      },
+      angle: { value: tag, duration: 1000 * 1.2, ease: "Power2" },
+      ease: "Power2",
+    });
+    timeline.add({
+      targets: this,
+      x: { value: originX, duration: 1500, ease: "Power2" },
+      y: {
+        value: originY,
+        duration: 1500,
+        ease: "Power2",
+      },
+      angle: { value: 0, duration: 1500 * 1.2, ease: "Power2" },
+      ease: "Power2",
     });
 
     timeline.play();
