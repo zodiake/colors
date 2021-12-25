@@ -2,7 +2,14 @@ const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: './src/ellipse/index.ts',
+  entry: {
+    ellipse: './src/ellipse/index.ts',
+    translation: './src/translation/index.ts'
+  },
+  output: {
+    path: __dirname + '/dist',
+    filename: "[name].js",
+  },
   devtool: 'eval-source-map',
   plugins: [
     new CopyPlugin({
@@ -26,10 +33,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-  },
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
     static: {
