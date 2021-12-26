@@ -38,19 +38,44 @@ export class HalfEllipse extends Phaser.GameObjects.Sprite {
         repeat: 0,
       });
     }
+
+    this.scene.anims.create({
+      key: "empty-top",
+      frames: [{ key: "atlas", frame: "empty-top.png" }],
+      frameRate: 10,
+      repeat: 0,
+    });
+
+    this.scene.anims.create({
+      key: "empty-bottom",
+      frames: [{ key: "atlas", frame: "empty-bottom.png" }],
+      frameRate: 10,
+      repeat: 0,
+    });
+
+    this.scene.anims.create({
+      key: "blue-bottom",
+      frames: [{ key: "blue-bottom-half" }],
+      frameRate: 10,
+      repeat: 0,
+    });
+    this.scene.anims.create({
+      key: "blue-top",
+      frames: [{ key: "blue-top-half" }],
+      frameRate: 10,
+      repeat: 0,
+    });
   }
 
   playHalf(color: string, orient: string) {
-    console.log(123);
     this.play(`${color}-${orient}-half`);
   }
 
-  playFill(color: string) {
-    console.log(123);
-    this.play(`${color}-filled`);
+  playFull(color: string, orient: string) {
+    this.play(`${color}-${orient}`);
   }
 
   restore() {
-    this.play(`empty-${this.position}-half`);
+    this.play(`empty-${this.position}`);
   }
 }

@@ -8,8 +8,8 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   rules: string[][];
   top: HalfEllipse;
   bottom: HalfEllipse;
-  firstColor: string;
-  secondColor: string;
+  firstColor: string = null;
+  secondColor: string = null;
 
   constructor(scene: Phaser.Scene, config: TargetEllipseConfig) {
     super(scene);
@@ -41,11 +41,22 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   }
 
   playFill(color: string) {
-    if (this.firstColor == null) {
+    if (this.firstColor == null && this.secondColor == null) {
+      this.firstColor = color;
       this.bottom.play(`${color}-bottom`);
+      return;
     }
     if (this.firstColor != null && this.secondColor == null) {
+      this.secondColor = color;
       this.top.play(`${color}-top`);
+      const mixedColor = this.checkColor();
+      console.log(mixedColor);
+      if (mixedColor != null) {
+        this.bottom.playFull(mixedColor, "bottom");
+        this.top.playFull(mixedColor, "top");
+      } else {
+        this.restore();
+      }
     }
   }
 

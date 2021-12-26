@@ -1,41 +1,39 @@
 export class CountdownLayer extends Phaser.GameObjects.Layer {
   timeline: Phaser.Tweens.Timeline;
+  lastTween: Phaser.GameObjects.Image;
+
   constructor(scene: Phaser.Scene) {
     super(scene);
-    const countDownThree = scene.add.image(0, 0, "three");
-    const countDownTwo = scene.add.image(-100, -100, "two");
-    const countDownOne = scene.add.image(-100, -100, "one");
-    const timeline = scene.tweens.createTimeline();
-    timeline.add({
-      targets: countDownThree,
+    const width = scene.scale.width / 2;
+    const height = scene.scale.height / 2;
+    this.lastTween = scene.add.image(width, height, "three");
+    const countDownTwo = scene.add.image(width, height, "two");
+    const countDownOne = scene.add.image(width, height, "one");
+    countDownOne.setAlpha(0);
+    countDownTwo.setAlpha(0);
+    this.lastTween.setAlpha(0);
+    this.timeline = scene.tweens.createTimeline();
+    this.timeline.add(this.config(this.lastTween));
+    this.timeline.add(this.config(countDownTwo));
+    this.timeline.add(this.config(countDownOne));
+  }
+
+  config(target: Phaser.GameObjects.Image) {
+    return {
+      targets: target,
       scaleX: 5,
       scaleY: 5,
+      alpha: 1,
       duration: 1000,
       ease: "Power1",
       onComplete: () => {
-        countDownThree.destroy();
+        target.setVisible(false);
       },
-    });
-    timeline.add({
-      targets: countDownTwo,
-      scaleX: 5,
-      scaleY: 5,
-      duration: 1000,
-      ease: "Power1",
-      onComplete: () => {
-        countDownTwo.destroy();
-      },
-    });
-    timeline.add({
-      targets: countDownOne,
-      scaleX: 5,
-      scaleY: 5,
-      duration: 1000,
-      ease: "Power1",
-      onComplete: () => {
-        countDownOne.destroy();
-      },
-    });
+    };
+  }
+
+  onComplete(config: Phaser.Types.Tweens.TweenBuilderConfig) {
+    this.timeline.add({ ...config, targets: this.lastTween });
   }
 
   play() {

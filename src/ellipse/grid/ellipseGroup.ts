@@ -8,8 +8,11 @@ export interface EllipseGroupConfig {
 }
 
 export class EllipseGroup extends Phaser.GameObjects.Group {
+  private canBeClicked = true;
+
   firstColor: EllipseSingle;
   secondColor: EllipseSingle;
+
   constructor(
     public scene: Phaser.Scene,
     public target: TargetEllipse,
@@ -38,5 +41,17 @@ export class EllipseGroup extends Phaser.GameObjects.Group {
       x: cellWidth + cellWidth / 2,
       y: cellHeight * 3,
     });
+  }
+
+  clickable() {
+    return this.canBeClicked;
+  }
+
+  disableClick() {
+    this.canBeClicked = false;
+  }
+
+  enableClick() {
+    this.canBeClicked = true;
   }
 }

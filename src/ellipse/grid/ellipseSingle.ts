@@ -7,6 +7,8 @@ export interface EllipseConfig {
 }
 
 export class EllipseSingle extends Phaser.GameObjects.Sprite {
+  private duration = 1500;
+
   constructor(
     public scene: Phaser.Scene,
     public group: EllipseGroup,
@@ -16,9 +18,11 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
   ) {
     super(scene, 0, 0, "atlas", `${config.color}-filled.png`);
 
-    this.setInteractive();
     this.on("pointerdown", () => {
-      this.pointerdown();
+      if (group.clickable()) {
+        group.disableClick();
+        this.pointerdown();
+      }
     });
   }
 
@@ -32,6 +36,7 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       const mixColor = this.target.checkColor();
       if (mixColor == null) {
         this.target.restore();
+        this.group.enableClick();
         this.group.firstColor = null;
         this.group.secondColor = null;
       } else {
@@ -56,13 +61,13 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
     }
     timeline.add({
       targets: this,
-      x: { value: tx, duration: 1500, ease: "Power2" },
+      x: { value: tx, duration: this.duration, ease: "Power2" },
       y: {
         value: targetY - this.height / 3,
         duration: 1500,
         ease: "Power2",
       },
-      angle: { value: tag, duration: 1500 * 1.2, ease: "Power2" },
+      angle: { value: tag, duration: this.duration * 1.2, ease: "Power2" },
       ease: "Power2",
       onComplete: () => {
         this.target.playFill(this.config.color);
@@ -70,25 +75,28 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
     });
     timeline.add({
       targets: this,
-      x: { value: tx, duration: 1000, ease: "Power2" },
+      x: { value: tx, duration: this.duration, ease: "Power2" },
       y: {
         value: targetY - this.height / 3,
         duration: 1000,
         ease: "Power2",
       },
-      angle: { value: tag, duration: 1000 * 1.2, ease: "Power2" },
+      angle: { value: tag, duration: this.duration, ease: "Power2" },
       ease: "Power2",
     });
     timeline.add({
       targets: this,
-      x: { value: originX, duration: 1500, ease: "Power2" },
+      x: { value: originX, duration: this.duration, ease: "Power2" },
       y: {
         value: originY,
         duration: 1500,
         ease: "Power2",
       },
-      angle: { value: 0, duration: 1500 * 1.2, ease: "Power2" },
+      angle: { value: 0, duration: this.duration, ease: "Power2" },
       ease: "Power2",
+      onComplete: () => {
+        this.group.enableClick();
+      },
     });
 
     timeline.play();

@@ -1,5 +1,7 @@
+import { CountdownLayer } from "../common/count-down-layer";
 import { FailUI } from "../common/fail-ui";
 import { ImageKeys } from "./config";
+import { Countdown } from "./countdown";
 import { Ellipse } from "./ellipse";
 import { EllipseGrid } from "./ellipse-grid";
 import { EllipseGroup } from "./grid/ellipseGroup";
@@ -8,7 +10,7 @@ import { TargetEllipse } from "./target/targetEllipse";
 export class MainSene extends Phaser.Scene {
   headEllipse: Ellipse;
   purpleEllipse: Ellipse;
-  countDownText: Phaser.GameObjects.Text;
+  countDownText: Countdown;
   grid: EllipseGrid;
   timeEvent: Phaser.Time.TimerEvent;
   failUI: FailUI<MainSene>;
@@ -37,16 +39,17 @@ export class MainSene extends Phaser.Scene {
   create() {
     const width = this.scale.width;
     const height = this.scale.height;
-    const countDownThree = this.add.image(0, 0, "three");
-    const countDownTwo = this.add.image(-100, -100, "two");
-    const countDownOne = this.add.image(-100, -100, "one");
+    const countDown = new CountdownLayer(this);
+    this.countDownText = new Countdown(this);
 
     const targetEllipse = new TargetEllipse(this, {
       rules: [["red", "purple", "blue"]],
     });
     this.timeEvent = this.time.addEvent({
-      repeat: 5,
-      callback: this.onStart,
+      repeat: 60,
+      callback: () => {
+        this.countDownText.update();
+      },
       callbackScope: this,
       delay: 1000,
       paused: true,
@@ -56,75 +59,23 @@ export class MainSene extends Phaser.Scene {
       columns: 6,
       rows: 2,
     });
-
-    /*
-    this.countDownText = this.add.text(100, 200, "60");
-    this.headEllipse = new Ellipse(this);
-    this.grid = new EllipseGrid(this, this.headEllipse, this.targetColor);
-    this.failUI = new FailUI(this, ImageEnum.FAIL_IMAGE);
-    this.failUI.init();
-
-    Phaser.Display.Align.In.Center(
-      countDownThree,
-      this.add.zone(width / 2, height / 2, width, height)
-    );
-
-    this.tweens.timeline({
-      tweens: [
-        {
-          targets: countDownThree,
-          scaleX: 5,
-          scaleY: 5,
-          duration: 1000,
-          ease: "Power1",
-          onComplete: () => {
-            countDownThree.destroy();
-            Phaser.Display.Align.In.Center(
-              countDownTwo,
-              this.add.zone(width / 2, height / 2, width, height)
-            );
-          },
-        },
-        {
-          targets: countDownTwo,
-          scaleX: 5,
-          scaleY: 5,
-          duration: 1000,
-          ease: "Power1",
-          onComplete: () => {
-            countDownTwo.destroy();
-            this.grid.children.forEach((i) => i.setInteractive());
-            this.grid.setTimeEvent(this.timeEvent);
-            Phaser.Display.Align.In.Center(
-              countDownOne,
-              this.add.zone(width / 2, height / 2, width, height)
-            );
-          },
-        },
-        {
-          targets: countDownOne,
-          scaleX: 5,
-          scaleY: 5,
-          duration: 1000,
-          ease: "Power1",
-          onComplete: () => {
-            countDownOne.destroy();
-            this.timeEvent = this.time.addEvent({
-              repeat: 5,
-              callback: this.onStart,
-              callbackScope: this,
-              delay: 1000,
-            });
-          },
-        },
-      ],
+    const mask = this.add.rectangle(0, 0, width, height, 0xffffff);
+    mask.setOrigin(0, 0);
+    mask.setAlpha(0.3);
+    countDown.onComplete({
+      targets: null,
+      onComplete: () => {
+        mask.setVisible(false);
+        groupEllipse.enableClick();
+        groupEllipse.getChildren().forEach((i) => i.setInteractive());
+        this.timeEvent.paused = false;
+      },
     });
-    */
+    countDown.play();
   }
 
   // update count down text
   onStart() {
-    const current = Number.parseInt(this.countDownText.text);
-    this.countDownText.setText((current - 1).toString());
+    this.countDownText.update();
   }
 }
