@@ -12,17 +12,19 @@ export class EllipseGroup extends Phaser.GameObjects.Group {
 
   firstColor: EllipseSingle;
   secondColor: EllipseSingle;
+  target: TargetEllipse;
 
   constructor(
     public scene: Phaser.Scene,
-    public target: TargetEllipse,
     public timeEvent: Phaser.Time.TimerEvent,
     config: EllipseGroupConfig
   ) {
     super(scene);
+    this.target = new TargetEllipse(scene, this, [["red", "purple", "blue"]]);
+
     config.colors
       .map((color) => {
-        return new EllipseSingle(this.scene, this, target, timeEvent, {
+        return new EllipseSingle(this.scene, this, this.target, timeEvent, {
           color,
           angle: 70,
         });
@@ -53,5 +55,19 @@ export class EllipseGroup extends Phaser.GameObjects.Group {
 
   enableClick() {
     this.canBeClicked = true;
+  }
+
+  update() {
+    if (this.firstColor != null && this.secondColor != null) {
+      const mixColor = this.target.checkColor();
+      if (mixColor == null) {
+        this.target.restore();
+        this.enableClick();
+        this.firstColor = null;
+        this.secondColor = null;
+      } else {
+        //this.countDownTime.remove(true);
+      }
+    }
   }
 }

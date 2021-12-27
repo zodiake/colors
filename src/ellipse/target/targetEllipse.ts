@@ -1,24 +1,20 @@
+import { EllipseGroup } from "../grid/ellipseGroup";
 import { HalfEllipse } from "./halfEllipse";
-
-export interface TargetEllipseConfig {
-  rules: string[][];
-}
 
 export class TargetEllipse extends Phaser.GameObjects.Container {
   rules: string[][];
   top: HalfEllipse;
   bottom: HalfEllipse;
-  firstColor: string = null;
-  secondColor: string = null;
 
-  constructor(scene: Phaser.Scene, config: TargetEllipseConfig) {
+  constructor(
+    scene: Phaser.Scene,
+    private group: EllipseGroup,
+    rules: string[][]
+  ) {
     super(scene);
     const width = scene.scale.width;
     const height = scene.scale.height;
-    this.rules = [
-      ...config.rules.map(([f, s, m]) => [s, f, m]),
-      ...config.rules,
-    ];
+    this.rules = [...rules.map(([f, s, m]) => [s, f, m]), ...rules];
     this.top = new HalfEllipse(scene, {
       orient: "top",
       colors: this.rules.map((i) => i[0]),
@@ -41,22 +37,10 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   }
 
   playFill(color: string) {
-    if (this.firstColor == null && this.secondColor == null) {
-      this.firstColor = color;
+    if (this.group.firstColor == null && this.group.secondColor == null) {
       this.bottom.play(`${color}-bottom`);
-      return;
-    }
-    if (this.firstColor != null && this.secondColor == null) {
-      this.secondColor = color;
+    } else {
       this.top.play(`${color}-top`);
-      const mixedColor = this.checkColor();
-      console.log(mixedColor);
-      if (mixedColor != null) {
-        this.bottom.playFull(mixedColor, "bottom");
-        this.top.playFull(mixedColor, "top");
-      } else {
-        this.restore();
-      }
     }
   }
 
@@ -64,6 +48,8 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
     this.bottom.restore();
     this.top.restore();
   }
+
+  update(): void {}
 
   checkColor(): string | null {
     const result = [];

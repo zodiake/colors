@@ -27,21 +27,12 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
   }
 
   pointerdown() {
-    if (this.group.firstColor == null && this.group.secondColor == null) {
+    if (this.group.firstColor == null) {
       this.playMove();
-    }
-    if (this.group.firstColor != null && this.group.secondColor == null) {
+      this.group.firstColor = this;
+    } else {
       this.playMove();
-
-      const mixColor = this.target.checkColor();
-      if (mixColor == null) {
-        this.target.restore();
-        this.group.enableClick();
-        this.group.firstColor = null;
-        this.group.secondColor = null;
-      } else {
-        this.countDownTime.remove(true);
-      }
+      this.group.secondColor = this;
     }
   }
 
@@ -74,17 +65,7 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       },
     });
     timeline.add({
-      targets: this,
-      x: { value: tx, duration: this.duration, ease: "Power2" },
-      y: {
-        value: targetY - this.height / 3,
-        duration: 1000,
-        ease: "Power2",
-      },
-      angle: { value: tag, duration: this.duration, ease: "Power2" },
-      ease: "Power2",
-    });
-    timeline.add({
+      delay: 1000,
       targets: this,
       x: { value: originX, duration: this.duration, ease: "Power2" },
       y: {

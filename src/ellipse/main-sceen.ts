@@ -11,7 +11,7 @@ export class MainSene extends Phaser.Scene {
   headEllipse: Ellipse;
   purpleEllipse: Ellipse;
   countDownText: Countdown;
-  grid: EllipseGrid;
+  group: EllipseGroup;
   timeEvent: Phaser.Time.TimerEvent;
   failUI: FailUI<MainSene>;
   targetColors = ["blue"];
@@ -42,9 +42,6 @@ export class MainSene extends Phaser.Scene {
     const countDown = new CountdownLayer(this);
     this.countDownText = new Countdown(this);
 
-    const targetEllipse = new TargetEllipse(this, {
-      rules: [["red", "purple", "blue"]],
-    });
     this.timeEvent = this.time.addEvent({
       repeat: 60,
       callback: () => {
@@ -54,7 +51,7 @@ export class MainSene extends Phaser.Scene {
       delay: 1000,
       paused: true,
     });
-    const groupEllipse = new EllipseGroup(this, targetEllipse, this.timeEvent, {
+    this.group = new EllipseGroup(this, this.timeEvent, {
       colors: ["red", "purple", "red", "purple"],
       columns: 6,
       rows: 2,
@@ -66,8 +63,8 @@ export class MainSene extends Phaser.Scene {
       targets: null,
       onComplete: () => {
         mask.setVisible(false);
-        groupEllipse.enableClick();
-        groupEllipse.getChildren().forEach((i) => i.setInteractive());
+        this.group.enableClick();
+        this.group.getChildren().forEach((i) => i.setInteractive());
         this.timeEvent.paused = false;
       },
     });
@@ -77,5 +74,9 @@ export class MainSene extends Phaser.Scene {
   // update count down text
   onStart() {
     this.countDownText.update();
+  }
+
+  update(time: number, delta: number): void {
+    this.group.update();
   }
 }
