@@ -2,37 +2,34 @@ import { EllipseGroup } from "../grid/ellipseGroup";
 import { HalfEllipse } from "./halfEllipse";
 
 export class TargetEllipse extends Phaser.GameObjects.Container {
-  rules: string[][];
   top: HalfEllipse;
   bottom: HalfEllipse;
 
   constructor(
     scene: Phaser.Scene,
     private group: EllipseGroup,
-    rules: string[][]
+    rules: Array<[string, string, string]>
   ) {
     super(scene);
     const width = scene.scale.width;
     const height = scene.scale.height;
-    this.rules = [...rules.map(([f, s, m]) => [s, f, m]), ...rules];
+
     this.top = new HalfEllipse(scene, {
       orient: "top",
-      colors: this.rules.map((i) => i[0]),
+      colors: rules.map((i) => i[0]),
       key: "atlas",
     });
     this.bottom = new HalfEllipse(scene, {
       orient: "bottom",
-      colors: this.rules.map((i) => i[1]),
+      colors: rules.map((i) => i[0]),
       key: "atlas",
     });
 
     this.add(this.top);
     this.add(this.bottom);
 
-    Phaser.Display.Align.In.Center(
-      this,
-      scene.add.zone(width / 2, height / 4, width, height)
-    );
+    this.y = height / 4;
+    this.x = width / 2;
     scene.add.existing(this);
   }
 
@@ -47,21 +44,5 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   restore() {
     this.bottom.restore();
     this.top.restore();
-  }
-
-  update(): void {}
-
-  checkColor(): string | null {
-    const result = [];
-    for (const [f, s, m] of this.rules) {
-      if (f === this.firstColor && s === this.secondColor) {
-        result.push(m);
-      }
-    }
-    if (result.length > 0) {
-      return result[0];
-    } else {
-      return null;
-    }
   }
 }

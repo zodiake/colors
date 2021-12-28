@@ -8,11 +8,12 @@ export interface EllipseGroupConfig {
 }
 
 export class EllipseGroup extends Phaser.GameObjects.Group {
-  private canBeClicked = true;
-
+  public clickable = true;
   firstColor: EllipseSingle;
   secondColor: EllipseSingle;
   target: TargetEllipse;
+  rules: Array<[string, string, string]>;
+  ruleMap: Map<string, string>;
 
   constructor(
     public scene: Phaser.Scene,
@@ -20,7 +21,14 @@ export class EllipseGroup extends Phaser.GameObjects.Group {
     config: EllipseGroupConfig
   ) {
     super(scene);
-    this.target = new TargetEllipse(scene, this, [["red", "purple", "blue"]]);
+    this.rules = [["red", "purple", "blue"]];
+    const entries: Array<[string, string]> = [
+      ...this.rules.map(([f, s, m]) => [s, f, m]),
+      ...this.rules,
+    ].map(([f, s, m]) => [f + "-" + s, m]);
+    this.ruleMap = new Map(entries);
+
+    this.target = new TargetEllipse(scene, this, this.rules);
 
     config.colors
       .map((color) => {
@@ -45,24 +53,14 @@ export class EllipseGroup extends Phaser.GameObjects.Group {
     });
   }
 
-  clickable() {
-    return this.canBeClicked;
-  }
-
-  disableClick() {
-    this.canBeClicked = false;
-  }
-
-  enableClick() {
-    this.canBeClicked = true;
-  }
-
   update() {
     if (this.firstColor != null && this.secondColor != null) {
-      const mixColor = this.target.checkColor();
-      if (mixColor == null) {
+      const m = this.ruleMap.get(
+        `${this.firstColor.config.color}-${this.secondColor.config.color}`
+      );
+      if (m == null) {
         this.target.restore();
-        this.enableClick();
+        this.clickable = true;
         this.firstColor = null;
         this.secondColor = null;
       } else {

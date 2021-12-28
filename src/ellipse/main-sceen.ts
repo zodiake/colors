@@ -63,7 +63,7 @@ export class MainSene extends Phaser.Scene {
       targets: null,
       onComplete: () => {
         mask.setVisible(false);
-        this.group.enableClick();
+        this.group.clickable = true;
         this.group.getChildren().forEach((i) => i.setInteractive());
         this.timeEvent.paused = false;
       },
