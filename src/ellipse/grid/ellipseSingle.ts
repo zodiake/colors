@@ -13,7 +13,6 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
     public scene: Phaser.Scene,
     public group: EllipseGroup,
     public target: TargetEllipse,
-    public countDownTime: Phaser.Time.TimerEvent,
     public config: EllipseConfig
   ) {
     super(scene, 0, 0, "atlas", `${config.color}-filled.png`);

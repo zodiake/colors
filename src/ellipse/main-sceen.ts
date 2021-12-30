@@ -1,21 +1,27 @@
 import { CountdownLayer } from "../common/count-down-layer";
 import { FailUI } from "../common/fail-ui";
 import { ImageKeys } from "./config";
-import { Countdown } from "./countdown";
+import { CountdownTime } from "./countdown";
 import { Ellipse } from "./ellipse";
-import { EllipseGrid } from "./ellipse-grid";
 import { EllipseGroup } from "./grid/ellipseGroup";
-import { TargetEllipse } from "./target/targetEllipse";
+
+export enum GameState {
+  success,
+  fail,
+  timeover,
+  pending,
+}
 
 export class MainSene extends Phaser.Scene {
   headEllipse: Ellipse;
   purpleEllipse: Ellipse;
-  countDownText: Countdown;
   group: EllipseGroup;
   timeEvent: Phaser.Time.TimerEvent;
   failUI: FailUI<MainSene>;
   targetColors = ["blue"];
   targetColor: string;
+  countdownTime: CountdownTime;
+  state: GameState = GameState.pending;
 
   constructor() {
     super("ellipse-main");
@@ -40,21 +46,13 @@ export class MainSene extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
     const countDown = new CountdownLayer(this);
-    this.countDownText = new Countdown(this);
+    this.countdownTime = new CountdownTime(this, this.state);
 
-    this.timeEvent = this.time.addEvent({
-      repeat: 60,
-      callback: () => {
-        this.countDownText.update();
-      },
-      callbackScope: this,
-      delay: 1000,
-      paused: true,
-    });
-    this.group = new EllipseGroup(this, this.timeEvent, {
+    this.group = new EllipseGroup(this, {
       colors: ["red", "purple", "red", "purple"],
       columns: 6,
       rows: 2,
+      state: this.state,
     });
     const mask = this.add.rectangle(0, 0, width, height, 0xffffff);
     mask.setOrigin(0, 0);
@@ -65,18 +63,14 @@ export class MainSene extends Phaser.Scene {
         mask.setVisible(false);
         this.group.clickable = true;
         this.group.getChildren().forEach((i) => i.setInteractive());
-        this.timeEvent.paused = false;
+        this.countdownTime.start();
       },
     });
     countDown.play();
   }
 
-  // update count down text
-  onStart() {
-    this.countDownText.update();
-  }
-
   update(time: number, delta: number): void {
     this.group.update();
+    this.countdownTime.update();
   }
 }
