@@ -5,7 +5,7 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   top: HalfEllipse;
   bottom: HalfEllipse;
 
-  constructor(public scene: MainSene, rules: Array<[string, string, string]>) {
+  constructor(public scene: MainSene) {
     super(scene);
     const width = scene.scale.width;
     const height = scene.scale.height;
@@ -34,7 +34,7 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
   }
 
   topFill(color: string) {
-    this.top.play(`${color}-bottom`);
+    this.top.play(`${color}-top`);
   }
 
   restore() {

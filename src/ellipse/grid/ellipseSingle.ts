@@ -11,21 +11,10 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
   constructor(public scene: MainSene, public config: EllipseConfig) {
     super(scene, 0, 0, "atlas", `${config.color}-filled.png`);
 
+    this.setInteractive();
     this.on("pointerdown", () => {
-      if (scene.group.clickable) {
-        scene.group.clickable = false;
-        this.pointerdown();
-      }
+      this.playMove();
     });
-  }
-
-  pointerdown() {
-    if (this.scene.firstColor == null) {
-      this.playMove();
-      this.scene.firstColor = this.config.color;
-    } else {
-      this.playMove();
-    }
   }
 
   moveToTarget(x: number, y: number) {}
@@ -47,6 +36,7 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       tx = targetX + this.width / 2;
       tag = -this.config.angle;
     }
+
     timeline.add({
       targets: this,
       x: { value: tx, duration: this.duration, ease: "Power2" },
@@ -78,9 +68,6 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       },
       angle: { value: 0, duration: this.duration, ease: "Power2" },
       ease: "Power2",
-      onComplete: () => {
-        this.scene.group.clickable = true;
-      },
     });
 
     timeline.play();

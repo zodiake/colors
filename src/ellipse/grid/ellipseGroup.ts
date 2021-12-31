@@ -10,7 +10,6 @@ export interface EllipseGroupConfig {
 }
 
 export class EllipseGroup extends Phaser.GameObjects.Group {
-  public clickable = true;
   state: GameState;
 
   constructor(public scene: MainSene, config: EllipseGroupConfig) {

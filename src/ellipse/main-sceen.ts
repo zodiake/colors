@@ -52,8 +52,8 @@ export class MainSene extends Phaser.Scene {
       rows: 2,
       state: this.state,
     });
-    const rules: Array<[string, string, string]> = [["red", "purple", "blue"]];
-    this.headerEllipse = new TargetEllipse(this, rules);
+    this.rules = [["red", "purple", "blue"]];
+    this.headerEllipse = new TargetEllipse(this);
     this.createRules();
   }
 
