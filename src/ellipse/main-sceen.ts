@@ -4,6 +4,7 @@ import { ImageKeys } from "./config";
 import { CountdownTime } from "./countdown";
 import { Ellipse } from "./ellipse";
 import { EllipseGroup } from "./grid/ellipseGroup";
+import { TargetEllipse } from "./target/targetEllipse";
 
 export enum GameState {
   success,
@@ -13,15 +14,13 @@ export enum GameState {
 }
 
 export class MainSene extends Phaser.Scene {
-  headEllipse: Ellipse;
-  purpleEllipse: Ellipse;
-  group: EllipseGroup;
-  timeEvent: Phaser.Time.TimerEvent;
-  failUI: FailUI<MainSene>;
-  targetColors = ["blue"];
-  targetColor: string;
-  countdownTime: CountdownTime;
   state: GameState = GameState.pending;
+  firstColor: string;
+  secondColor: string;
+  headerEllipse: TargetEllipse;
+  group: EllipseGroup;
+  rules: Array<[string, string, string]>;
+  ruleMap: Map<string, string>;
 
   constructor() {
     super("ellipse-main");
@@ -46,7 +45,6 @@ export class MainSene extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
     const countDown = new CountdownLayer(this);
-    this.countdownTime = new CountdownTime(this, this.state);
 
     this.group = new EllipseGroup(this, {
       colors: ["red", "purple", "red", "purple"],
@@ -54,23 +52,31 @@ export class MainSene extends Phaser.Scene {
       rows: 2,
       state: this.state,
     });
-    const mask = this.add.rectangle(0, 0, width, height, 0xffffff);
-    mask.setOrigin(0, 0);
-    mask.setAlpha(0.3);
-    countDown.onComplete({
-      targets: null,
-      onComplete: () => {
-        mask.setVisible(false);
-        this.group.clickable = true;
-        this.group.getChildren().forEach((i) => i.setInteractive());
-        this.countdownTime.start();
-      },
-    });
-    countDown.play();
+    const rules: Array<[string, string, string]> = [["red", "purple", "blue"]];
+    this.headerEllipse = new TargetEllipse(this, rules);
+    this.createRules();
+  }
+
+  createRules() {
+    this.rules = [["red", "purple", "blue"]];
+    const entries: Array<[string, string]> = [
+      ...this.rules.map(([f, s, m]) => [s, f, m]),
+      ...this.rules,
+    ].map(([f, s, m]) => [f + "-" + s, m]);
+    this.ruleMap = new Map(entries);
   }
 
   update(time: number, delta: number): void {
-    this.group.update();
-    this.countdownTime.update();
+    if (this.firstColor != null && this.secondColor != null) {
+      // change target color or restore
+    }
+    if (this.firstColor != null) {
+      this.headerEllipse.bottomFill(this.firstColor);
+      return;
+    }
+    if (this.secondColor != null) {
+      this.headerEllipse.topFill(this.secondColor);
+      return;
+    }
   }
 }

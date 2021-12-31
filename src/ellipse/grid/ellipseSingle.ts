@@ -1,5 +1,4 @@
-import { TargetEllipse } from "../target/targetEllipse";
-import { EllipseGroup } from "./ellipseGroup";
+import { MainSene } from "../main-sceen";
 
 export interface EllipseConfig {
   color: string;
@@ -9,34 +8,34 @@ export interface EllipseConfig {
 export class EllipseSingle extends Phaser.GameObjects.Sprite {
   private duration = 1500;
 
-  constructor(
-    public scene: Phaser.Scene,
-    public group: EllipseGroup,
-    public target: TargetEllipse,
-    public config: EllipseConfig
-  ) {
+  constructor(public scene: MainSene, public config: EllipseConfig) {
     super(scene, 0, 0, "atlas", `${config.color}-filled.png`);
 
     this.on("pointerdown", () => {
-      if (group.clickable) {
-        group.clickable = false;
+      if (scene.group.clickable) {
+        scene.group.clickable = false;
         this.pointerdown();
       }
     });
   }
 
   pointerdown() {
-    if (this.group.firstColor == null) {
+    if (this.scene.firstColor == null) {
       this.playMove();
-      this.group.firstColor = this;
+      this.scene.firstColor = this.config.color;
     } else {
       this.playMove();
     }
   }
 
+  moveToTarget(x: number, y: number) {}
+
   playMove() {
     const [originX, originY] = [this.x, this.y];
-    const [targetX, targetY] = [this.target.x, this.target.y];
+    const [targetX, targetY] = [
+      this.scene.headerEllipse.x,
+      this.scene.headerEllipse.y,
+    ];
     const timeline = this.scene.tweens.createTimeline();
 
     let tx = 0;
@@ -59,8 +58,13 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       angle: { value: tag, duration: this.duration * 1.2, ease: "Power2" },
       ease: "Power2",
       onComplete: () => {
-        this.target.playFill(this.config.color);
-        this.group.secondColor = this;
+        if (this.scene.firstColor == null) {
+          this.scene.firstColor = this.config.color;
+        } else if (this.scene.secondColor == null) {
+          this.scene.secondColor = this.config.color;
+        } else {
+          console.error("error should not happen");
+        }
       },
     });
     timeline.add({
@@ -75,7 +79,7 @@ export class EllipseSingle extends Phaser.GameObjects.Sprite {
       angle: { value: 0, duration: this.duration, ease: "Power2" },
       ease: "Power2",
       onComplete: () => {
-        this.group.clickable = true;
+        this.scene.group.clickable = true;
       },
     });
 

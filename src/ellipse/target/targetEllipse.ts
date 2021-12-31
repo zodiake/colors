@@ -1,15 +1,11 @@
-import { EllipseGroup } from "../grid/ellipseGroup";
+import { MainSene } from "../main-sceen";
 import { HalfEllipse } from "./halfEllipse";
 
 export class TargetEllipse extends Phaser.GameObjects.Container {
   top: HalfEllipse;
   bottom: HalfEllipse;
 
-  constructor(
-    scene: Phaser.Scene,
-    private group: EllipseGroup,
-    rules: Array<[string, string, string]>
-  ) {
+  constructor(public scene: MainSene, rules: Array<[string, string, string]>) {
     super(scene);
     const width = scene.scale.width;
     const height = scene.scale.height;
@@ -33,16 +29,18 @@ export class TargetEllipse extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  playFill(color: string) {
-    if (this.group.firstColor == null && this.group.secondColor == null) {
-      this.bottom.play(`${color}-bottom`);
-    } else {
-      this.top.play(`${color}-top`);
-    }
+  bottomFill(color: string) {
+    this.bottom.play(`${color}-bottom`);
+  }
+
+  topFill(color: string) {
+    this.top.play(`${color}-bottom`);
   }
 
   restore() {
     this.bottom.restore();
     this.top.restore();
   }
+
+  update(first: string, second: string): void {}
 }

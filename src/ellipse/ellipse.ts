@@ -10,6 +10,8 @@ export class Ellipse {
   topSprit: Phaser.GameObjects.Sprite;
   bottomSprit: Phaser.GameObjects.Sprite;
   container: Phaser.GameObjects.Container;
+  x: number;
+  y: number;
 
   constructor(private scene: Phaser.Scene) {
     this.container = scene.add.container(0, 0);
@@ -30,6 +32,8 @@ export class Ellipse {
       this.container,
       scene.add.zone(width / 2, height / 4, width, height)
     );
+    this.x = width / 2;
+    this.y = height / 4;
     this.addAnimation();
   }
 
